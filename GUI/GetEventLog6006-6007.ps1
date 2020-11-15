@@ -81,6 +81,8 @@ $btn.Add_Click($button_Click)
 	$f = New-Object Form
 	$f.Text = "システムイベントログ6006-6007取得"
 	$f.Size = "400, 230"
+    $f.MaximumSize  =$f.Size
+    $f.MinimumSize  =$f.Size
     $f.MaximizeBox = $false
     $f.MinimizeBox = $false
     $f.StartPosition = "CenterScreen"
