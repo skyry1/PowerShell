@@ -14,14 +14,24 @@ Add-Type -AssemblyName System.Drawing
 	$lbl1.AutoSize = $True
     
 	$lbl2 = New-Object Label
-	$lbl2.Text = "開始時刻:"
+	$lbl2.Text = "起動:"
 	$lbl2.Location = "15, 60"
 	$lbl2.AutoSize = $True
 
 	$lbl3 = New-Object Label
-	$lbl3.Text = "終了時刻:"
+	$lbl3.Text = "ログイン:"
 	$lbl3.Location = "15, 90"
 	$lbl3.AutoSize = $True
+
+	$lbl4 = New-Object Label
+	$lbl4.Text = "ログオフ:"
+	$lbl4.Location = "15, 120"
+	$lbl4.AutoSize = $True
+
+	$lbl5 = New-Object Label
+	$lbl5.Text = "シャットダウン:"
+	$lbl5.Location = "15, 150"
+	$lbl5.AutoSize = $True
 #endregion
 
 # 入力欄
@@ -42,6 +52,16 @@ Add-Type -AssemblyName System.Drawing
     $txt2 = New-Object TextBox
     $txt2.location = "100,90"
     $txt2.Width = 100
+
+    $txt3 = New-Object TextBox
+    $txt3.location = "100,120"
+    $txt3.Width = 100
+
+    $txt4 = New-Object TextBox
+    $txt4.location = "100,150"
+    $txt4.Width = 100
+
+    $txtTemp = New-Object TextBox
 #endregion
 
 # 確認ボタン
@@ -49,60 +69,57 @@ Add-Type -AssemblyName System.Drawing
 	$btn = New-Object Button
 	$btn.Text = "確認"
 	$btn.Size = "150, 40"
-	$btn.Location = "100, 120"
+	$btn.Location = "100, 180"
 	$btn.AutoSize = $True
 #endregion
 
 # ボタンのクリック
-$button_Click = {
-    
-    #初期化
-    $txt1.Text = ""
-    $txt2.Text = ""
-    
-    #$str = GET-EVENTLog System -After "2020/01/18 12:00:00" -Newest 1| Where-Object{$_.EventId -eq 6005} | select-Object TimeGenerated
-    $before = $Date.Value.Date + " 23:59:59"
-    $after = $Date.Value.Date + " 00:00:00"
-    $replace = "@{TimeGenerated="+$Date.Value.Month+"/"+$Date.Value.Day+"/"+$Date.Value.Year+" "
-    Write-Host $before
-    Write-Host $after
-    Write-Host $replace
-    try
-    {
-        $result1 = GET-EVENTLog System -After $after -before $before| Where-Object{$_.EventId -eq 6005 -or $_.EventId -eq 7001} | select-Object TimeGenerated
-        $rs1 = $result1.Length
-        write-host $result1
-        Write-Host $rs1
-        $txt1.Text = $result1[$rs1 - 1]
-        $txt1.Text = $txt1.Text.Replace($replace,"").Replace("}","")
-    }
-    catch
-    {
-    }
-
-    try
-    {
-        $result2 = GET-EVENTLog System -After $after -before $before| Where-Object{$_.EventId -eq 6006 -or $_.EventId -eq 7002} | select-Object TimeGenerated
-        write-host $result2
-        $txt2.Text = $result2[0]
-        $txt2.Text = $txt2.Text.Replace($replace,"").Replace("}","")
-    }
-    catch
-    {
-    }
+$button_Click = {    
+    #検索結果格納
+    $txt1.Text = getEventLog(6005)
+    $txt2.Text = getEventLog(7001)
+    $txt3.Text = getEventLog(6006)
+    $txt4.Text = getEventLog(7002)
 }
 $btn.Add_Click($button_Click)
+
+
+function getEventLog($eventId)
+{
+    $replace = "@{TimeGenerated="+$Date.Value.Month+"/"+$Date.Value.Day+"/"+$Date.Value.Year+" "    
+    $before = $Date.Value.Date + " 23:59:59"
+    $after = $Date.Value.Date + " 00:00:00"
+    $txtTemp.Text = ""
+    try
+    {
+        $eventLog = GET-EVENTLog System -After $after -before $before| Where-Object{$_.EventId -eq $eventId} | select-Object TimeGenerated
+        If(($eventId -eq "6005") -or ($eventId -eq "7001"))
+        {
+            $length = $eventLog.Length
+            $txtTemp.Text = $eventLog[$length - 1]
+        }
+        Else {
+            $txtTemp.Text = $eventLog[0]
+        }
+        $txtTemp.Text = $txtTemp.Text.Replace($replace,"").Replace("}","")
+    }
+    catch
+    {
+        Write-host $eventId"でエラー"
+    }
+    return $txtTemp.Text
+}
 
 # フォーム
 #region Form
 	$f = New-Object Form
-	$f.Text = "6005(7001)-6006(7002)"
-	$f.Size = "330, 220"
+	$f.Text = "PC起動時刻確認"
+	$f.Size = "330, 270"
     $f.MaximumSize  =$f.Size
     $f.MinimumSize  =$f.Size
     $f.MaximizeBox = $false
     $f.MinimizeBox = $false
     $f.StartPosition = "CenterScreen"
-    $f.Controls.AddRange(@($lbl1,$lbl2,$lbl3,$Date,$txt1,$txt2,$btn))
+    $f.Controls.AddRange(@($lbl1,$lbl2,$lbl3,$lbl4,$lbl5,$Date,$txt1,$txt2,$txt3,$txt4,$btn))
     $f.ShowDialog()
 #endregion
