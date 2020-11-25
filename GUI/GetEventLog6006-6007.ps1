@@ -4,7 +4,7 @@ Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
 # ビジュアルスタイルを適用（未記載の場合クラシック形式の表示）
-[Application]::EnableVisualStyles()
+# [Application]::EnableVisualStyles()
 
 # ラベル
 #region Label
@@ -78,8 +78,8 @@ $button_Click = {
     #検索結果格納
     $txt1.Text = getEventLog(6005)
     $txt2.Text = getEventLog(7001)
-    $txt3.Text = getEventLog(6006)
-    $txt4.Text = getEventLog(7002)
+    $txt3.Text = getEventLog(7002)
+    $txt4.Text = getEventLog(6006)
 }
 $btn.Add_Click($button_Click)
 
@@ -113,7 +113,7 @@ function getEventLog($eventId)
 # フォーム
 #region Form
 	$f = New-Object Form
-	$f.Text = "PC起動時刻確認"
+	$f.Text = "起動から終了まで"
 	$f.Size = "330, 270"
     $f.MaximumSize  =$f.Size
     $f.MinimumSize  =$f.Size
