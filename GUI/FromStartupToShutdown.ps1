@@ -1,4 +1,3 @@
-# 仕様として、dll の参照追加よりも、using 名前空間の方を先に記載しなくちゃいけない
 using namespace System.Windows.Forms
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -73,13 +72,20 @@ Add-Type -AssemblyName System.Drawing
 	$btn.AutoSize = $True
 #endregion
 
-# ボタンのクリック
-$button_Click = {    
+# ボタンのクリック処理
+$button_Click = {
+    
+    #マウスカーソル：待機状態
+    [System.Windows.Forms.Cursor]::Current = [System.Windows.Forms.Cursors]::WaitCursor
+
     #検索結果格納
     $txt1.Text = getEventLog(6005)
     $txt2.Text = getEventLog(7001)
     $txt3.Text = getEventLog(7002)
     $txt4.Text = getEventLog(6006)
+
+    #マウスカーソル：デフォルト
+    [System.Windows.Forms.Cursor]::Current = [System.Windows.Forms.Cursors]::Default
 }
 $btn.Add_Click($button_Click)
 
@@ -105,7 +111,7 @@ function getEventLog($eventId)
     }
     catch
     {
-        Write-host $eventId"でエラー"
+        Write-host $eventId"取得結果なし"
     }
     return $txtTemp.Text
 }
