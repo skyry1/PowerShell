@@ -2,35 +2,32 @@ using namespace System.Windows.Forms
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-# ビジュアルスタイルを適用（未記載の場合クラシック形式の表示）
-# [Application]::EnableVisualStyles()
-
 # ラベル
 #region Label
-	$lbl1 = New-Object Label
-	$lbl1.Text = "検索日付:"
-	$lbl1.Location = "15, 30"
-	$lbl1.AutoSize = $True
-    
-	$lbl2 = New-Object Label
-	$lbl2.Text = "起動:"
-	$lbl2.Location = "15, 60"
-	$lbl2.AutoSize = $True
+    $lbl1 = New-Object Label
+    $lbl1.Text = "検索日付:"
+    $lbl1.Location = "15, 30"
+    $lbl1.AutoSize = $True
 
-	$lbl3 = New-Object Label
-	$lbl3.Text = "ログイン:"
-	$lbl3.Location = "15, 90"
-	$lbl3.AutoSize = $True
+    $lbl2 = New-Object Label
+    $lbl2.Text = "起動:"
+    $lbl2.Location = "15, 60"
+    $lbl2.AutoSize = $True
 
-	$lbl4 = New-Object Label
-	$lbl4.Text = "ログオフ:"
-	$lbl4.Location = "15, 120"
-	$lbl4.AutoSize = $True
+    $lbl3 = New-Object Label
+    $lbl3.Text = "ログイン:"
+    $lbl3.Location = "15, 90"
+    $lbl3.AutoSize = $True
 
-	$lbl5 = New-Object Label
-	$lbl5.Text = "シャットダウン:"
-	$lbl5.Location = "15, 150"
-	$lbl5.AutoSize = $True
+    $lbl4 = New-Object Label
+    $lbl4.Text = "ログオフ:"
+    $lbl4.Location = "15, 120"
+    $lbl4.AutoSize = $True
+
+    $lbl5 = New-Object Label
+    $lbl5.Text = "シャットダウン:"
+    $lbl5.Location = "15, 150"
+    $lbl5.AutoSize = $True
 #endregion
 
 # 入力欄
@@ -38,7 +35,7 @@ Add-Type -AssemblyName System.Drawing
     $Date = New-Object System.Windows.Forms.DatetimePicker
     $Date.location = "100,30"
     $Date.Format = "Long"
-	$Date.AutoSize = $True
+    $Date.AutoSize = $True
     $Date.Width = 150
 #endregion
 
@@ -65,16 +62,16 @@ Add-Type -AssemblyName System.Drawing
 
 # 確認ボタン
 #region Button
-	$btn = New-Object Button
-	$btn.Text = "確認"
-	$btn.Size = "150, 40"
-	$btn.Location = "100, 180"
-	$btn.AutoSize = $True
+    $btn = New-Object Button
+    $btn.Text = "確認"
+    $btn.Size = "150, 40"
+    $btn.Location = "100, 180"
+    $btn.AutoSize = $True
 #endregion
 
 # ボタンのクリック処理
 $button_Click = {
-    
+
     #マウスカーソル：待機状態
     [System.Windows.Forms.Cursor]::Current = [System.Windows.Forms.Cursors]::WaitCursor
 
@@ -91,8 +88,16 @@ $btn.Add_Click($button_Click)
 
 
 function getEventLog($eventId)
-{
-    $replace = "@{TimeGenerated="+$Date.Value.Month+"/"+$Date.Value.Day+"/"+$Date.Value.Year+" "    
+{    
+    $dd = $Date.Value.Day
+    if ($dd.toString().length -eq 1) {
+        $dd = "0" + $Date.Value.Day
+    }
+    $MM = $Date.Value.Month
+    if ($MM.toString().length -eq 1) {
+        $MM = "0" + $Date.Value.Month
+    }
+    $replace = "@{TimeGenerated="+$MM+"/"+$dd+"/"+$Date.Value.Year+" "
     $before = $Date.Value.Date + " 23:59:59"
     $after = $Date.Value.Date + " 00:00:00"
     $txtTemp.Text = ""
@@ -118,9 +123,9 @@ function getEventLog($eventId)
 
 # フォーム
 #region Form
-	$f = New-Object Form
-	$f.Text = "起動から終了まで"
-	$f.Size = "330, 270"
+    $f = New-Object Form
+    $f.Text = "起動から終了まで"
+    $f.Size = "330, 270"
     $f.MaximumSize  =$f.Size
     $f.MinimumSize  =$f.Size
     $f.MaximizeBox = $false
