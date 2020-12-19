@@ -1,4 +1,6 @@
 using namespace System.Windows.Forms
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
 
 # ƒtƒH[ƒ€î•ñ
 #region designer
