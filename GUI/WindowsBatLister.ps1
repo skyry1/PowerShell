@@ -6,12 +6,15 @@ Add-Type -AssemblyName System.Drawing
 # フォーム情報
 #region designer
 
+    # カレントディレクトリ
+    $scriptPath = Get-Location
+    
     # フォントの設定
     $Font = New-Object System.Drawing.Font("メイリオ",8)
 
     # フォーム
     $form = New-Object Form
-    $form.Text = "バッチ一覧(Made with powershell)"
+    $form.Text = "バッチ一覧($scriptPath)"
     $form.MaximizeBox = $false
     $form.MinimizeBox = $false
     $form.StartPosition = "CenterScreen"
