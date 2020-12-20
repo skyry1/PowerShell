@@ -1,3 +1,4 @@
+# おまじない
 using namespace System.Windows.Forms
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -63,7 +64,7 @@ Add-Type -AssemblyName System.Drawing
 #endregion
 
 # ボタンのクリック処理
-#region designer
+#region button_Click
 $button_Click = {
     #マウスカーソル：待機状態
     [System.Windows.Forms.Cursor]::Current = [System.Windows.Forms.Cursors]::WaitCursor
