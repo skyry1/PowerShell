@@ -65,21 +65,22 @@ Add-Type -AssemblyName System.Drawing
 
 # ボタンのクリック処理
 #region button_Click
-$button_Click = {
+$replace = {
     #マウスカーソル：待機状態
     [System.Windows.Forms.Cursor]::Current = [System.Windows.Forms.Cursors]::WaitCursor
 
     #正規表現実行
+    $txt4.Text = ""
     $txt4.Text = [regex]::Replace($txt1.Text, $txt2.Text, $txt3.Text)
 
     #マウスカーソル：デフォルト
     [System.Windows.Forms.Cursor]::Current = [System.Windows.Forms.Cursors]::Default
 }
-$button_Click2 = {
+$clear = {
     #マウスカーソル：待機状態
     [System.Windows.Forms.Cursor]::Current = [System.Windows.Forms.Cursors]::WaitCursor
 
-    #正規表現実行
+    #テキストボックスをクリア
     $txt1.Text = ""
     $txt2.Text = ""
     $txt3.Text = ""
@@ -88,8 +89,8 @@ $button_Click2 = {
     #マウスカーソル：デフォルト
     [System.Windows.Forms.Cursor]::Current = [System.Windows.Forms.Cursors]::Default
 }
-$btn.Add_Click($button_Click)
-$btn2.Add_Click($button_Click2)
+$btn.Add_Click($replace)
+$btn2.Add_Click($clear)
 #endregion
 
 # スタートアップ処理
