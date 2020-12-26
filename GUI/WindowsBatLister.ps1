@@ -1,4 +1,3 @@
-# おまじない
 using namespace System.Windows.Forms
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -24,7 +23,7 @@ Add-Type -AssemblyName System.Drawing
     # チェックボックス
     $CheckedBox = New-Object CheckBox
     $CheckedBox.Text = "管理者権限で実行"
-    $CheckedBox.size ="150,22" 
+    $CheckedBox.size ="200,22" 
     $CheckedBox.Location = "5, 5"
     $CheckedBox.Checked = $True
     $CheckedBox.font = $Font
@@ -42,12 +41,19 @@ Add-Type -AssemblyName System.Drawing
         $itemList = Get-ChildItem $dir -Recurse
         foreach($item in $itemList)
         {
-            #batファイルのみ
-            if($item.Extension -eq ".bat")
+            #bat,cmdファイルのみ
+            if($item.Extension -eq ".bat" -or $item.Extension -eq ".cmd")
             {
+                #除外するファイル
+                if($item.Name -eq "CreateTestFiles.bat")
+                {
+                    continue
+                }
+
                 $btn = New-Object Button
                 $btn.font = $Font
-                $btn.Text = $item.BaseName
+                #ボタン名は置換可能
+                $btn.Text =  [regex]::Replace($item.BaseName, "〇〇システム", "")
                 $btn.Tag = $item.FullName
                 $btn.Size = "150, 50"
                 $btn.Location = "$LocationX,$LocationY"
