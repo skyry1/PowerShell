@@ -34,6 +34,7 @@ Add-Type -AssemblyName System.Drawing
         $LocationX = 25
         $LocationY = 30
         $i = 1        
+        $batNum = 0
 
         # サブフォルダ含まない
         #$itemList = Get-ChildItem $dir
@@ -45,7 +46,7 @@ Add-Type -AssemblyName System.Drawing
             if($item.Extension -eq ".bat" -or $item.Extension -eq ".cmd")
             {
                 #除外するファイル
-                if($item.Name -eq "CreateTestFiles.bat")
+                if($item.Name -eq "")
                 {
                     continue
                 }
@@ -82,15 +83,22 @@ Add-Type -AssemblyName System.Drawing
                 })
                 $form.Controls.Add($btn)
                 $i += 1
+                $batNum += 1
             }
         }
-        $form.MaximumSize = $form.Size
-        $form.MinimumSize = $form.Size
+        If ($batNum -eq 0)
+        {
+            [System.Windows.Forms.MessageBox]::Show("BAT/CMDファイルが存在しないため終了します。", "情報", "OK", "None")
+        } else {
+            $form.MaximumSize = $form.Size
+            $form.MinimumSize = $form.Size
+            $form.ShowDialog()
+        }
     }
 #endregion
 
 # スタートアップ処理
 #region startup
     Form_Load
-    $form.ShowDialog()
+
 #endregion
