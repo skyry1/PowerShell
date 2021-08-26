@@ -11,3 +11,4 @@ Windows PowerShell を使用した .NET Framework 3.5 の有効化
 
 ## References
 [Windows PowerShell を使用した .NET Framework 3.5 の有効化](https://docs.microsoft.com/ja-jp/windows-hardware/manufacture/desktop/enable-net-framework-35-by-using-windows-powershell)
+a
