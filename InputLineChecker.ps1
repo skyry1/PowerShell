@@ -1,3 +1,5 @@
+Add-Type -AssemblyName System.Windows.Forms
+
 #エラーチェック用変数
 $ErroeStrs = @('パース'
                 ,'デタ')
@@ -31,11 +33,14 @@ $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
 #Funcion記載箇所
 #region Funcions
     function LoggerInfo($msg){
-        Write-Host "[INFO]:$msg" -ForegroundColor yellow
+        Write-Host "[INFO]:$msg"
     }
-    
+    function LoggerWarn($msg){
+        Write-Host "[WARN]:$msg" -ForegroundColor yellow 
+    }
+        
     function LoggerError($msg){
-        Write-Host "[INFO]:$msg" -ForegroundColor red
+        Write-Host "[ERROR]:$msg" -ForegroundColor red
     }
 
     #CSVファイル出力
@@ -80,20 +85,55 @@ $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
             $LineCount++
         }
     }
+
+    #Excelファイルチェック
+    function OpenExcelFile($File){
+        # Excelオブジェクト作成
+        $excel = New-Object -ComObject Excel.Application
+        $book = $null
+        try{
+            # 画面表示しない
+            $excel.Visible = $false
+
+            # Excelブックを開く
+            $book = $excel.Workbooks.Open($File)
+        } catch {
+            LoggerError $File'の操作に失敗しました。'
+        } finally {
+            # Excelブックを閉じる
+            if ($book -ne $null) {
+                [void]$book.Close($false)
+                [void][System.Runtime.Interopservices.Marshal]::ReleaseComObject($book)
+            }
+
+            # Excelの終了
+            [void]$excel.Quit()
+
+            # オブジェクトの開放
+            # ApplicationとBookに対して行えばよい
+            [void][System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel)
+        }
+    }
 #endregion
 
 #メイン処理
 #region main
-    if([string]::IsNullorEmpty($Args[0]))
-    {
-        LoggerError "引数が指定されていません"
+    
+    $FolderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog -Property @{
+        Description = 'チェック対象ファイルがあるフォルダを選択してください。'
+    }
+
+    if($FolderBrowser.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK){
+        #[System.Windows.MessageBox]::Show('選択したフォルダ：' + $FolderBrowser.SelectedPath)
+    }else{
+        LoggerInfo 'フォルダは選択されませんでしたので処理を終了します。'
         pause
         return
     }
     
     LoggerInfo "処理を開始します。"
     #ファイル一覧を取得する
-    $DIRFILE = dir -Recurse -File $Args[0]
+    $DIRFILE = dir -Recurse -File $FolderBrowser.SelectedPath
     $Files = ${DIRFILE}.fullname
     
     #ファイルを1件ずつ処理をしていく
@@ -104,6 +144,8 @@ $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
         #ファイルの中身をチェックしていく（拡張子によりチェック処理の内容は変わる）
         if ($Extension -match $ExcelFileExtensions)
         {
+            LoggerWarn $Extension'の拡張子は実装中です。'
+            OpenExcelFile $File
         } elseif ($Extension -match $TextFileExtensions)
         {
             OpenTextFile $File
