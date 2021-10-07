@@ -154,9 +154,14 @@ $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
         }
     }
     
-    #エラー結果をCSVファイルに記入していく
-    $FileName = 'CheckResult_'+(Get-Date).ToString("yyyyMMddHHmm")+'.csv'
-    OutputCsvFile $FileName
+    if ($checkResults.Count -eq '0') {
+        LoggerInfo '処理結果が0件のため処理結果ファイルを出力しません。'
+    } else {
+        #エラー結果をCSVファイルに記入していく
+        $FileName = 'CheckResult_'+(Get-Date).ToString("yyyyMMddHHmm")+'.csv'
+        OutputCsvFile $FileName
+    }
     LoggerInfo '処理が終了しました。'
+    pause
 #endregion
 
