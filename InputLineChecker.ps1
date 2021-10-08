@@ -2,22 +2,22 @@ Add-Type -AssemblyName System.Windows.Forms
 
 #エラーチェック用変数
 $ErroeStrs = @('パース'
-                ,'デタ')
+                ,'テスト用')
 $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
-                ,'デタは不適切です。データに修正してください。')
+                ,'テスト用は不適切です。')
 
 #処理概要
 #region Readme
-#事前準備
-#powershellの実行ポリシーを変更
-#Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
-
-#処理順序
-#①引数からファイルパスを抽出する
-#②ファイルを１つずつ開いていく
-#③ファイルの中身を1行ずつチェックし、チェック結果を配列に格納していく
-#④まだファイルが残っていたら②に戻る
-#⑤チェック結果をCSVファイルに出力する
+    #事前準備
+    #powershellの実行ポリシーを変更
+    #Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+    
+    #処理順序
+    #①引数からファイルパスを抽出する
+    #②ファイルを１つずつ開いていく
+    #③ファイルの中身を1行ずつチェックし、チェック結果を配列に格納していく
+    #④まだファイルが残っていたら②に戻る
+    #⑤チェック結果をCSVファイルに出力する
 #endregion
 
 #グローバル変数一覧
@@ -38,11 +38,9 @@ $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
     function LoggerWarn($msg){
         Write-Host "[WARN]:$msg" -ForegroundColor yellow 
     }
-        
     function LoggerError($msg){
         Write-Host "[ERROR]:$msg" -ForegroundColor red
     }
-
     #CSVファイル出力
     function OutputCsvFile($FileName) {
         LoggerInfo $FileName'を出力します。'
@@ -64,7 +62,6 @@ $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
             $i++
         }
     }
-    
     #テキストファイルチェック
     function OpenTextFile($File){
         
@@ -85,7 +82,6 @@ $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
             $LineCount++
         }
     }
-
     #Excelファイルチェック
     function OpenExcelFile($File){
         # Excelオブジェクト作成
@@ -96,7 +92,32 @@ $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
             $excel.Visible = $false
 
             # Excelブックを開く
-            $book = $excel.Workbooks.Open($File)
+            # Write-Host $book.Name
+            $book = $excel.Workbooks.Open($File)            
+
+            # シートを１件ずつ処理
+            foreach($Sheet in $book.Sheets) {
+                # Write-Host $Sheet.Name
+                for($row=1; $row -lt 10; $row++) {
+                    for($col=1; $col -lt 10; $col++) {
+                        $Line = $sheet.Cells.Item($row,$col).Text
+                        If ($Line -eq '') {
+                            continue
+                        }
+                        
+                        $j=0
+                        foreach ($ErroeStr in $ErroeStrs) {
+                            if($Line.Contains($ErroeStr)) {
+                                $cellpoint = $Sheet.Name + '_' + [string]$row + '行_' + [string]$col +'列セル'
+                                $checkResult = $File +',' + $cellpoint +',' +$ErrorMsgs[$j]
+                                $checkResults.add($checkResult)
+                            }
+                            $j++
+                        }
+                    }
+                }
+            }
+
         } catch {
             LoggerError $File'の操作に失敗しました。'
         } finally {
