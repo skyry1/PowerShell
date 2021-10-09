@@ -2,9 +2,9 @@ Add-Type -AssemblyName System.Windows.Forms
 
 #エラーチェック用変数
 $ErroeStrs = @('パース'
-                ,'テスト用')
+                ,'テスト')
 $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
-                ,'テスト用は不適切です。')
+                ,'テストは不適切です。')
 
 #処理概要
 #region Readme
@@ -98,7 +98,7 @@ $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
             # シートを１件ずつ処理
             foreach($Sheet in $book.Sheets) {
                 # Write-Host $Sheet.Name
-                for($row=1; $row -lt 10; $row++) {
+                for($row=1; $row -lt 100; $row++) {
                     for($col=1; $col -lt 10; $col++) {
                         $Line = $sheet.Cells.Item($row,$col).Text
                         If ($Line -eq '') {
@@ -108,8 +108,8 @@ $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
                         $j=0
                         foreach ($ErroeStr in $ErroeStrs) {
                             if($Line.Contains($ErroeStr)) {
-                                $cellpoint = $Sheet.Name + '_' + [string]$row + '行_' + [string]$col +'列セル'
-                                $checkResult = $File +',' + $cellpoint +',' +$ErrorMsgs[$j]
+                                [string]$cellpoint = $Sheet.Name + '_' + [string]$row + '行_' + [string]$col +'列セル'
+                                [string]$checkResult = $File +',' + $cellpoint +',' +$ErrorMsgs[$j]
                                 $checkResults.add($checkResult)
                             }
                             $j++
@@ -117,7 +117,6 @@ $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
                     }
                 }
             }
-
         } catch {
             LoggerError $File'の操作に失敗しました。'
         } finally {
@@ -165,7 +164,6 @@ $ErrorMsgs = @('パースは不適切です。パスに修正してください。'
         #ファイルの中身をチェックしていく（拡張子によりチェック処理の内容は変わる）
         if ($Extension -match $ExcelFileExtensions)
         {
-            LoggerWarn $Extension'の拡張子は実装中です。'
             OpenExcelFile $File
         } elseif ($Extension -match $TextFileExtensions)
         {
